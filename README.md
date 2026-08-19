@@ -4,6 +4,11 @@
 
 It calculates **Adjusted Cost Base (ACB)** per token under Canadian Revenue Agency (CRA) rules, segregates the **2024 CRA inclusion rate shift** (`2024 P1` vs `2024 P2`), tracks **Line 13000 / T2125 income** (mining, staking, lending interest, rewards), and generates **CRA Schedule 3 capital gains reports**.
 
+> [!IMPORTANT]
+> **100% Standalone Operation**
+> - **Just Need Transactions**: You only need your transaction CSVs (from exchanges, wallets, or Koinly exports). CytoTax computes your entire portfolio history, ACB pools, income, and Schedule 3 reports **100% from scratch**.
+> - **Prior Schedule 3 Reconciliation (Optional)**: If you happen to have prior filed Schedule 3 PDFs, CytoTax offers an optional benchmark test to verify calculations against past returns. If you don't have past Schedule 3 PDFs, CytoTax simply outputs your complete tax reports directly.
+
 ---
 
 ## 🛠️ Features
