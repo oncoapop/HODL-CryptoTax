@@ -1,0 +1,9 @@
+Transaction report 2024
+
+Date,Type,Tag,Sending Wallet,Sent Amount,Sent Currency,Sent Cost Basis,Receiving Wallet,Received Amount,Received Currency,Received Cost Basis,Fee Amount,Fee Currency,Gain (CAD),Net Value (CAD),Fee Value (CAD),TxSrc,TxDest,TxHash,Description
+2024-01-01 10:00:00 UTC,crypto_deposit,Reward,"","","","",Sample Exchange,0.005,SOL,0.75,"","","",0.75,"","","",0xsamplehash001,Staking Reward
+2024-01-15 14:30:00 UTC,buy,"","","","","",Sample Exchange,0.01,BTC,650.00,"","","",650.00,"","","",0xsamplehash002,Bought BTC with CAD
+2024-02-01 18:20:00 UTC,exchange,"",Sample Exchange,0.005,BTC,325.00,Sample Exchange,0.15,ETH,380.00,0.0001,BTC,55.00,380.00,6.50,0xsrc01,0xdest01,0xsamplehash003,Swapped BTC for ETH
+2024-03-10 09:15:00 UTC,transfer,"",Sample Exchange,0.15,ETH,380.00,Hardware Wallet,0.15,ETH,380.00,0.002,ETH,"",380.00,7.60,0xsrc02,0xdest02,0xsamplehash004,Transferred ETH to Cold Storage
+2024-06-01 12:00:00 UTC,sell,"",Sample Exchange,0.05,ETH,126.67,"",220.00,CAD,220.00,1.50,CAD,93.33,220.00,1.50,"","","",0xsamplehash005,Sold ETH for CAD
+2024-07-01 15:45:00 UTC,crypto_deposit,Mining,"","","","",Pool Wallet,100.0,SFD,15.00,"","","",15.00,"","","",0xsamplehash006,Mining Payout
