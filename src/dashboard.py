@@ -19,7 +19,7 @@ if st.sidebar.button("Re-run Ingestion & Tax Computation"):
 # Compute tax totals
 yearly_data = process_transactions()
 
-tabs = st.tabs(["📊 Schedule 3 Tax Summary", "💰 Asset ACB Pools", "📜 Transaction History", "⚙️ Active Wallets (2026+)"])
+tabs = st.tabs(["📊 Schedule 3 Tax Summary", "💰 Asset ACB Pools", "📜 Transaction History", "⚙️ Active Wallets (2026+)", "🏛️ CRA Compliance Statement"])
 
 with tabs[0]:
     st.header("CRA Schedule 3 & Income Summary by Tax Year")
@@ -68,4 +68,19 @@ with tabs[3]:
     - **Centralized Exchanges**: Coinbase, KuCoin, Nexo, Kraken, Bitbuy, StakeCube.
     - **On-Chain Wallets**: Solana (`Helium`), Bitcoin (`Ledger`), Ethereum (`0x...`).
     - **Custom Chains**: SafeDeal (SFD), BiblePay (BBP).
+    """)
+
+with tabs[4]:
+    st.header("🏛️ CRA Compliance & Directive Alignment Statement")
+    st.success("CytoTax Engine is built to follow official Canada Revenue Agency (CRA) directives and Income Tax Act (ITA) statutory provisions.")
+    
+    st.markdown("""
+    ### Implemented Statutory Framework:
+    1. **ITA Section 47 (ACB Pools)**: Weighted-average cost basis pooling across all identical properties in non-registered accounts.
+    2. **ITA Section 54 (Dispositions)**: Taxable dispositions on crypto-to-fiat sales, crypto-to-crypto trades, and transaction fee payments.
+    3. **Line 13000 / Form T2125 (Income)**: 100% CAD Fair Market Value (FMV) reporting on date of receipt for mining, staking, lending interest, and rewards.
+    4. **2024 Schedule 3 Inclusion Rate Shift**: Automatic period segregation into `2024 P1` (Jan 1 - Jun 24) and `2024 P2` (Jun 25 - Dec 31).
+    5. **ITA Subsection 54(1) (Superficial Loss Rule)**: Loss denial on identical property re-acquired within 30 days before/after disposition.
+    
+    *Disclaimer: CytoTax is an open-source calculation assistance tool. Taxpayers are responsible for final verification of filings with the CRA or a certified CPA.*
     """)

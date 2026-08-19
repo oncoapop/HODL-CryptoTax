@@ -13,6 +13,15 @@ It calculates **Adjusted Cost Base (ACB)** per token under Canadian Revenue Agen
 - **Streamlit Web Dashboard**: Interactive local UI to inspect portfolio balances, ACB pools, realized gains, and historical transaction ledgers.
 - **Historical Benchmark Verification**: Milestone test suite to verify calculated annual totals against prior filed CRA Schedule 3 returns.
 
+## 🏛️ CRA Compliance & Directive Alignment
+CytoTax is engineered to strictly follow official **Canada Revenue Agency (CRA)** tax legislation and administrative directives:
+1. **Income Tax Act (ITA) Section 47 (ACB)**: Weighted-average cost pooling for identical properties across all non-registered wallets and exchanges.
+2. **ITA Section 54 (Dispositions)**: Taxable dispositions on crypto-to-fiat, crypto-to-crypto trades, and fee payments.
+3. **Line 13000 / T2125 Income**: 100% CAD FMV valuation on date of receipt for mining, staking, rewards, and lending interest.
+4. **2024 Schedule 3 Inclusion Rate Shift**: Automatic period segregation (`2024 P1` Jan 1 – Jun 24 vs `2024 P2` Jun 25 – Dec 31).
+
+Read the complete [CRA Compliance & Directive Alignment Statement](file:///e:/CODEX/Cytotax/docs/CRA_COMPLIANCE_STATEMENT.md) for full statutory references.
+
 ---
 
 ## 📂 Project Structure
