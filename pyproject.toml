@@ -1,0 +1,10 @@
+[project]
+name = "cytotax"
+version = "0.1.0"
+description = "CRA Crypto Tax Accounting Engine & Portfolio Ledger"
+dependencies = [
+    "streamlit>=1.30.0",
+    "pandas>=2.0.0",
+    "pypdf>=4.0.0"
+]
+requires-python = ">=3.10"
