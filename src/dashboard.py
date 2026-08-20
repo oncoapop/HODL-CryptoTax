@@ -11,9 +11,10 @@ st.markdown("Custom Koinly replacement for CRA Schedule 3 capital gains & T2125 
 
 # Sidebar controls
 st.sidebar.header("Controls & Actions")
-if st.sidebar.button("Re-run Ingestion & Tax Computation"):
-    from importer import import_csvs
-    import_csvs()
+if st.sidebar.button("Re-run Ingestion & Tax Computation", type="primary", use_container_width=True, help="Re-processes all CSV transactions and recalculates tax totals"):
+    with st.spinner("Processing transactions & computing taxes..."):
+        from importer import import_csvs
+        import_csvs()
     st.sidebar.success("Database re-indexed successfully!")
 
 # Compute tax totals
@@ -24,21 +25,24 @@ tabs = st.tabs(["📊 Schedule 3 Tax Summary", "💰 Asset ACB Pools", "📜 Tra
 with tabs[0]:
     st.header("CRA Schedule 3 & Income Summary by Tax Year")
     
-    selected_year = st.selectbox("Select Tax Period", list(yearly_data.keys()), index=len(yearly_data)-1 if yearly_data else 0)
-    data = yearly_data.get(selected_year, {'Proceeds': 0.0, 'ACB': 0.0, 'Gain': 0.0, 'Income': 0.0})
-    
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Proceeds of Disposition", f"${data['Proceeds']:,.2f}")
-    col2.metric("Adjusted Cost Base (ACB)", f"${data['ACB']:,.2f}")
-    
-    gain_val = data['Gain']
-    col3.metric("Realized Gain / Loss", f"${gain_val:,.2f}", delta=f"{gain_val:,.2f}" if gain_val >= 0 else f"{gain_val:,.2f}")
-    col4.metric("Taxable Income (Line 13000)", f"${data['Income']:,.2f}")
-    
-    st.markdown("---")
-    st.subheader("All Tax Years Summary Table")
-    summary_df = pd.DataFrame.from_dict(yearly_data, orient='index')
-    st.dataframe(summary_df.style.format("${:,.2f}"), use_container_width=True)
+    if not yearly_data:
+        st.info("No transaction data found. Please add your CSVs to the `Transactions/` folder and click **Re-run Ingestion & Tax Computation** in the sidebar to compute taxes.", icon="ℹ️")
+    else:
+        selected_year = st.selectbox("Select Tax Period", list(yearly_data.keys()), index=len(yearly_data)-1 if yearly_data else 0)
+        data = yearly_data.get(selected_year, {'Proceeds': 0.0, 'ACB': 0.0, 'Gain': 0.0, 'Income': 0.0})
+
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("Proceeds of Disposition", f"${data['Proceeds']:,.2f}")
+        col2.metric("Adjusted Cost Base (ACB)", f"${data['ACB']:,.2f}")
+
+        gain_val = data['Gain']
+        col3.metric("Realized Gain / Loss", f"${gain_val:,.2f}", delta=f"{gain_val:,.2f}" if gain_val >= 0 else f"{gain_val:,.2f}")
+        col4.metric("Taxable Income (Line 13000)", f"${data['Income']:,.2f}")
+
+        st.markdown("---")
+        st.subheader("All Tax Years Summary Table")
+        summary_df = pd.DataFrame.from_dict(yearly_data, orient='index')
+        st.dataframe(summary_df.style.format("${:,.2f}"), use_container_width=True)
 
 with tabs[1]:
     st.header("Active Currency Pools & Adjusted Cost Base (ACB)")
