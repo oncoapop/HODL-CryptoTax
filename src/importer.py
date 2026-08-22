@@ -29,7 +29,7 @@ def import_csvs():
     for f in sorted(files):
         # Deduplicate identical files
         with open(f, 'rb') as f_bin:
-            f_hash = hashlib.md5(f_bin.read()).hexdigest()
+            f_hash = hashlib.sha256(f_bin.read()).hexdigest()
         if f_hash in seen_file_hashes:
             print(f"Skipping duplicate file {f}")
             continue
