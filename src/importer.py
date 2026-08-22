@@ -20,7 +20,7 @@ def import_csvs():
     conn = get_db()
     cursor = conn.cursor()
     
-    csv_dir = r"e:\CODEX\Cytotax\Transactions"
+    csv_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "Transactions")
     files = glob.glob(os.path.join(csv_dir, "*.csv"))
     
     total_rows = 0
