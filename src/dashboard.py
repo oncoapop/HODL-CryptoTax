@@ -11,9 +11,10 @@ st.markdown("Custom Koinly replacement for CRA Schedule 3 capital gains & T2125 
 
 # Sidebar controls
 st.sidebar.header("Controls & Actions")
-if st.sidebar.button("Re-run Ingestion & Tax Computation"):
-    from importer import import_csvs
-    import_csvs()
+if st.sidebar.button("Re-run Ingestion & Tax Computation", help="Re-reads all transaction CSVs and completely recalculates the tax database."):
+    with st.spinner("Rebuilding database and recalculating taxes..."):
+        from importer import import_csvs
+        import_csvs()
     st.sidebar.success("Database re-indexed successfully!")
 
 # Compute tax totals

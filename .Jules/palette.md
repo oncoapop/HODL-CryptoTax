@@ -1,0 +1,3 @@
+## 2024-05-15 - Streamlit Spinner & Tooltips
+**Learning:** Streamlit's `st.sidebar.button` supports a `help` parameter for native tooltips, and wrapping long-running functions in `with st.spinner()` provides immediate, accessible loading feedback without custom CSS.
+**Action:** Always wrap data-intensive operations (like database ingestion) in `st.spinner()` when using Streamlit to prevent the UI from appearing frozen to the user.
