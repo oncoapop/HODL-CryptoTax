@@ -11,9 +11,15 @@ st.markdown("Custom Koinly replacement for CRA Schedule 3 capital gains & T2125 
 
 # Sidebar controls
 st.sidebar.header("Controls & Actions")
-if st.sidebar.button("Re-run Ingestion & Tax Computation"):
-    from importer import import_csvs
-    import_csvs()
+if st.sidebar.button(
+    "Re-run Ingestion & Tax Computation",
+    type="primary",
+    use_container_width=True,
+    help="Parses transaction CSVs, rebuilds the database, and recalculates ACB pools."
+):
+    with st.spinner("Indexing transactions & computing tax..."):
+        from importer import import_csvs
+        import_csvs()
     st.sidebar.success("Database re-indexed successfully!")
 
 # Compute tax totals
@@ -50,7 +56,7 @@ with tabs[1]:
         "quantity": "{:,.4f}",
         "total_acb_cad": "${:,.2f}",
         "unit_cost_cad": "${:,.4f}"
-    }), use_container_width=True)
+    }), use_container_width=True, hide_index=True)
 
 with tabs[2]:
     st.header("Historical Transaction Ledger")
@@ -58,7 +64,7 @@ with tabs[2]:
     tx_df = pd.read_sql_query("SELECT date, type, tag, sending_wallet, sent_amount, sent_currency, receiving_wallet, received_amount, received_currency, gain_cad, net_value_cad FROM transactions ORDER BY date DESC LIMIT 100", conn)
     conn.close()
     
-    st.dataframe(tx_df, use_container_width=True)
+    st.dataframe(tx_df, use_container_width=True, hide_index=True)
 
 with tabs[3]:
     st.header("Active 2026+ HODL Tracking Setup")
