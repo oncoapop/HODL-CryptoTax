@@ -1,0 +1,18 @@
+--- src/dashboard.py
++++ src/dashboard.py
+@@ -32,11 +32,11 @@
+     data = yearly_data.get(selected_year, {'Proceeds': 0.0, 'ACB': 0.0, 'Gain': 0.0, 'Income': 0.0})
+
+     col1, col2, col3, col4 = st.columns(4)
+-    col1.metric("Proceeds of Disposition", f"${data['Proceeds']:,.2f}")
+-    col2.metric("Adjusted Cost Base (ACB)", f"${data['ACB']:,.2f}")
++    col1.metric("Proceeds of Disposition", f"${data['Proceeds']:,.2f}", help="Total CAD received from disposing assets.")
++    col2.metric("Adjusted Cost Base (ACB)", f"${data['ACB']:,.2f}", help="The cost of your property, plus any expenses to acquire it.")
+
+     gain_val = data['Gain']
+-    col3.metric("Realized Gain / Loss", f"${gain_val:,.2f}", delta=f"{gain_val:,.2f}" if gain_val >= 0 else f"{gain_val:,.2f}")
+-    col4.metric("Taxable Income (Line 13000)", f"${data['Income']:,.2f}")
++    col3.metric("Realized Gain / Loss", f"${gain_val:,.2f}", delta=f"{gain_val:,.2f}" if gain_val >= 0 else f"{gain_val:,.2f}", help="Proceeds minus Adjusted Cost Base.")
++    col4.metric("Taxable Income (Line 13000)", f"${data['Income']:,.2f}", help="Income from mining, staking, and interest.")
+
+     st.markdown("---")

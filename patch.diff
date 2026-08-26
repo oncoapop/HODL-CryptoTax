@@ -1,0 +1,19 @@
+--- src/dashboard.py
++++ src/dashboard.py
+@@ -12,8 +12,14 @@
+
+ # Sidebar controls
+ st.sidebar.header("Controls & Actions")
+-if st.sidebar.button("Re-run Ingestion & Tax Computation"):
+-    from importer import import_csvs
+-    import_csvs()
++if st.sidebar.button(
++    "Re-run Ingestion & Tax Computation",
++    type="primary",
++    use_container_width=True,
++    help="Rebuilds the tax database and recalculates Adjusted Cost Base (ACB)"
++):
++    with st.spinner("Processing transactions and computing tax..."):
++        from importer import import_csvs
++        import_csvs()
+     st.sidebar.success("Database re-indexed successfully!")
