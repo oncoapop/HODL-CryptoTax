@@ -20,7 +20,7 @@ def import_csvs():
     conn = get_db()
     cursor = conn.cursor()
     
-    csv_dir = r"e:\CODEX\Cytotax\Transactions"
+    csv_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "Transactions")
     files = glob.glob(os.path.join(csv_dir, "*.csv"))
     
     total_rows = 0
@@ -29,7 +29,8 @@ def import_csvs():
     for f in sorted(files):
         # Deduplicate identical files
         with open(f, 'rb') as f_bin:
-            f_hash = hashlib.md5(f_bin.read()).hexdigest()
+            # Sentinel: Use sha256 instead of md5 to avoid collision vulnerabilities
+            f_hash = hashlib.sha256(f_bin.read()).hexdigest()
         if f_hash in seen_file_hashes:
             print(f"Skipping duplicate file {f}")
             continue
