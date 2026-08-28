@@ -28,8 +28,9 @@ def import_csvs():
     
     for f in sorted(files):
         # Deduplicate identical files
+        # SECURITY FIX: Use SHA-256 instead of MD5 to prevent collision vulnerabilities (CWE-327)
         with open(f, 'rb') as f_bin:
-            f_hash = hashlib.md5(f_bin.read()).hexdigest()
+            f_hash = hashlib.sha256(f_bin.read()).hexdigest()
         if f_hash in seen_file_hashes:
             print(f"Skipping duplicate file {f}")
             continue
