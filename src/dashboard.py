@@ -11,14 +11,26 @@ st.markdown("Custom Koinly replacement for CRA Schedule 3 capital gains & T2125 
 
 # Sidebar controls
 st.sidebar.header("Controls & Actions")
+import logging
+
 if st.sidebar.button("Re-run Ingestion & Tax Computation", type="primary", use_container_width=True, help="Re-processes all CSV transactions and recalculates tax totals"):
     with st.spinner("Processing transactions & computing taxes..."):
-        from importer import import_csvs
-        import_csvs()
-    st.sidebar.success("Database re-indexed successfully!")
+        try:
+            from importer import import_csvs
+            import_csvs()
+            st.sidebar.success("Database re-indexed successfully!")
+        except Exception as e:
+            logging.error("Ingestion failed", exc_info=True)
+            st.sidebar.error("An error occurred during processing.")
 
 # Compute tax totals
-yearly_data = process_transactions()
+try:
+    yearly_data = process_transactions()
+except Exception as e:
+    logging.error("Tax computation failed", exc_info=True)
+    st.error("An error occurred computing taxes.")
+    yearly_data = {}
+
 
 tabs = st.tabs(["📊 Schedule 3 Tax Summary", "💰 Asset ACB Pools", "📜 Transaction History", "⚙️ Active Wallets (2026+)", "🏛️ CRA Compliance Statement"])
 

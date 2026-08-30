@@ -2,7 +2,7 @@ import csv
 import glob
 import os
 
-files = glob.glob(r"e:\CODEX\Cytotax\Transactions\*.csv")
+files = glob.glob(os.path.join(os.path.dirname(os.path.dirname(__file__)), "Transactions", "*.csv"))
 print("Found files:", len(files))
 
 rows = []

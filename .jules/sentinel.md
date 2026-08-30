@@ -1,0 +1,4 @@
+## 2024-10-24 - Avoiding Security Theater and False Positives with Hash Functions
+**Vulnerability:** The application used `hashlib.sha256()` for simple file deduplication (checking if identical files had already been processed) which is an unnecessary performance overhead and over-complicates the implementation (security theater).
+**Learning:** Security static analysis tools (like Bandit) often flag weak hashes like `md5` (B324) assuming they are used in a cryptographic context. However, for non-cryptographic purposes like deduplication, they are acceptable and faster.
+**Prevention:** When using `hashlib.md5` or other weak hashing functions for non-cryptographic purposes (like deduplication), explicitly pass the `usedforsecurity=False` parameter. This avoids false positives from security scanners (e.g., Bandit) while preventing functional regressions, particularly in FIPS-compliant environments.
