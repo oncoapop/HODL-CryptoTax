@@ -53,6 +53,10 @@ def init_db():
     conn.commit()
     conn.close()
 
+    # 🛡️ Sentinel: Restrict permissions on the SQLite database so only the owner can read/write
+    # This prevents sensitive financial information from being accessed by other users on the system
+    os.chmod(DB_PATH, 0o600)
+
 if __name__ == '__main__':
     init_db()
     print("Database initialized.")
