@@ -12,6 +12,12 @@ def init_db():
     if os.path.exists(DB_PATH):
         os.remove(DB_PATH)
     
+    # 🛡️ Sentinel: Enforce strict file permissions (600) on the local database
+    # to protect sensitive financial transaction data from unauthorized read/write.
+    if not os.path.exists(DB_PATH):
+        fd = os.open(DB_PATH, os.O_CREAT | os.O_RDWR, 0o600)
+        os.close(fd)
+
     conn = get_db()
     cursor = conn.cursor()
     
