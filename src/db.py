@@ -12,6 +12,10 @@ def init_db():
     if os.path.exists(DB_PATH):
         os.remove(DB_PATH)
     
+    # 🛡️ Sentinel: Securely create database file with strict permissions to prevent unauthorized access
+    fd = os.open(DB_PATH, os.O_CREAT | os.O_RDWR, 0o600)
+    os.close(fd)
+
     conn = get_db()
     cursor = conn.cursor()
     
