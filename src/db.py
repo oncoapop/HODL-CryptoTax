@@ -12,6 +12,10 @@ def init_db():
     if os.path.exists(DB_PATH):
         os.remove(DB_PATH)
     
+    # Pre-create the database file with strict permissions (0o600) to protect sensitive financial data
+    fd = os.open(DB_PATH, os.O_CREAT | os.O_RDWR, 0o600)
+    os.close(fd)
+
     conn = get_db()
     cursor = conn.cursor()
     

@@ -1,0 +1,4 @@
+## 2024-09-05 - Secure SQLite Database File Permissions for Financial Data Storage
+**Vulnerability:** The SQLite database `cytotax.db` containing sensitive CRA (Canada Revenue Agency) financial and tax information was being created with default system file permissions. This could allow unauthorized read/write access to sensitive tax data by other users on the system if deployed or run in a shared environment.
+**Learning:** Default file creation by sqlite3 (or similar database adapters) does not enforce strict permissions by default. In applications dealing with sensitive financial, tax, or PII data locally, the database file must be explicitly protected.
+**Prevention:** Pre-create the local database file with strict restrictive permissions (e.g., `os.O_CREAT | os.O_RDWR, 0o600` via `os.open`) before passing it to the database connector (e.g., `sqlite3.connect`) to ensure it is only accessible by the owner.
