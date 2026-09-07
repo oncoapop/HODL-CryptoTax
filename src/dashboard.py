@@ -42,7 +42,10 @@ with tabs[0]:
         st.markdown("---")
         st.subheader("All Tax Years Summary Table")
         summary_df = pd.DataFrame.from_dict(yearly_data, orient='index')
-        st.dataframe(summary_df.style.format("${:,.2f}"), use_container_width=True)
+        if summary_df.empty:
+            st.info("No tax summary data available to display.", icon="ℹ️")
+        else:
+            st.dataframe(summary_df.style.format("${:,.2f}"), use_container_width=True)
 
 with tabs[1]:
     st.header("Active Currency Pools & Adjusted Cost Base (ACB)")
@@ -50,11 +53,14 @@ with tabs[1]:
     pools_df = pd.read_sql_query("SELECT currency, quantity, total_acb_cad, unit_cost_cad FROM acb_pools WHERE quantity > 0 ORDER BY total_acb_cad DESC", conn)
     conn.close()
     
-    st.dataframe(pools_df.style.format({
-        "quantity": "{:,.4f}",
-        "total_acb_cad": "${:,.2f}",
-        "unit_cost_cad": "${:,.4f}"
-    }), use_container_width=True)
+    if pools_df.empty:
+        st.info("No active currency pools found. Import transactions to see your balances.", icon="ℹ️")
+    else:
+        st.dataframe(pools_df.style.format({
+            "quantity": "{:,.4f}",
+            "total_acb_cad": "${:,.2f}",
+            "unit_cost_cad": "${:,.4f}"
+        }), use_container_width=True)
 
 with tabs[2]:
     st.header("Historical Transaction Ledger")
@@ -62,7 +68,10 @@ with tabs[2]:
     tx_df = pd.read_sql_query("SELECT date, type, tag, sending_wallet, sent_amount, sent_currency, receiving_wallet, received_amount, received_currency, gain_cad, net_value_cad FROM transactions ORDER BY date DESC LIMIT 100", conn)
     conn.close()
     
-    st.dataframe(tx_df, use_container_width=True)
+    if tx_df.empty:
+        st.info("No transactions found in the ledger. Import CSVs to view your history.", icon="ℹ️")
+    else:
+        st.dataframe(tx_df, use_container_width=True)
 
 with tabs[3]:
     st.header("Active 2026+ HODL Tracking Setup")
