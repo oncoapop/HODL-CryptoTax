@@ -4,6 +4,13 @@ import os
 DB_PATH = os.path.join(os.path.dirname(__file__), 'cytotax.db')
 
 def get_db():
+    try:
+        # Securely create the database file with restricted permissions (0o600)
+        fd = os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)
+        os.close(fd)
+    except FileExistsError:
+        pass  # File already exists, proceed to connect
+
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
