@@ -1,0 +1,4 @@
+## 2024-05-24 - Secure SQLite DB Initialization
+**Vulnerability:** SQLite database file (`cytotax.db`) was created with default file permissions by `sqlite3.connect()`, potentially allowing unauthorized access to sensitive financial data by other users on the system.
+**Learning:** Default permissions for new files are not strict enough for sensitive data. Simply using `os.chmod` after creating the file with `sqlite3.connect()` creates a Time-of-Check to Time-of-Use (TOCTOU) race condition where the file could be accessed before permissions are restricted.
+**Prevention:** Always pre-create sensitive files like SQLite databases with strict permissions (`0o600` for read/write by owner only) using `os.open` with flags `os.O_CREAT | os.O_EXCL | os.O_RDWR` inside a `try...except FileExistsError:` block before interacting with them.
