@@ -1,0 +1,4 @@
+## 2024-09-12 - Secure File Creation for Local DBs
+**Vulnerability:** SQLite database file `cytotax.db` containing sensitive financial transaction and tax data was being created with default, overly permissive file permissions (e.g. 644) by `sqlite3.connect()`.
+**Learning:** Default file creation by standard library functions often lacks strict security controls, leading to potential data exposure. Using `os.open` with `O_CREAT | O_EXCL` is necessary to securely bootstrap files before libraries access them.
+**Prevention:** Pre-create sensitive local database files with strict permissions (`0o600`) using a safe pattern like `os.open(..., os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)` inside a `try...except FileExistsError:` block to prevent Time-of-Check to Time-of-Use (TOCTOU) race conditions before handing off to high-level connections like `sqlite3.connect()`.
