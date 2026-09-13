@@ -4,6 +4,15 @@ import os
 DB_PATH = os.path.join(os.path.dirname(__file__), 'cytotax.db')
 
 def get_db():
+    # 🛡️ Sentinel: Pre-create database file with strict permissions to prevent unauthorized access
+    try:
+        # Create file with 0o600 permissions (read/write for owner only)
+        # using os.O_EXCL to prevent Time-of-Check to Time-of-Use (TOCTOU) race conditions
+        fd = os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)
+        os.close(fd)
+    except FileExistsError:
+        pass
+
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn

@@ -1,0 +1,4 @@
+## 2026-09-13 - Secure Database File Creation (TOCTOU Prevention)
+**Vulnerability:** Local financial data exposure. The SQLite database file (`cytotax.db`) containing sensitive crypto tax data was being created with default system permissions when `sqlite3.connect()` was called. On multi-user systems, this could allow unauthorized users to read or write sensitive financial information.
+**Learning:** Depending on `sqlite3.connect()` to create the database file relies on the default `umask`, which might be overly permissive (e.g., `0o644`). Also, checking for existence and then creating a file is susceptible to Time-of-Check to Time-of-Use (TOCTOU) race conditions.
+**Prevention:** Always pre-create sensitive local database files using `os.open` with strict permissions (e.g., `0o600` for owner read/write only) and the `os.O_CREAT | os.O_EXCL` flags inside a `try...except FileExistsError` block before connecting with `sqlite3`.
