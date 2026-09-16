@@ -1,0 +1,4 @@
+## 2024-03-22 - [Time-of-Check to Time-of-Use SQLite DB Permissions]
+**Vulnerability:** The application accesses local SQLite database without verifying creation and file permissions in `db.py`, potentially resulting in insecure defaults causing financial data exposure (TOCTOU).
+**Learning:** `sqlite3.connect()` creates databases with default system umask, which can allow broad read/write access. Ensure you pre-create the DB file explicitly with strict permissions.
+**Prevention:** Use `os.open` with `os.O_CREAT | os.O_EXCL | os.O_RDWR` and mode `0o600` (within a try-except block checking for FileExistsError) prior to `sqlite3.connect` to guarantee restrictive DB file permissions.
