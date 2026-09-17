@@ -1,0 +1,4 @@
+## 2026-09-17 - Secure SQLite Database Creation with Strict Permissions
+**Vulnerability:** The SQLite database containing sensitive financial transaction data was being created using default permissions. Additionally, simply opening the DB connection could be susceptible to a Time-of-Check to Time-of-Use (TOCTOU) race condition during initialization.
+**Learning:** SQLite's default connection does not guarantee strict file permissions upon creation. For financial data, strict file permissions (0o600) must be enforced from the moment the file is created.
+**Prevention:** Pre-create the database file using `os.open` with strict creation flags (`os.O_CREAT | os.O_EXCL | os.O_RDWR`) and restricted permissions (`0o600`) inside a `try...except FileExistsError` block before connecting via `sqlite3`. If `FileExistsError` is caught immediately after the file was meant to be deleted, the application must explicitly raise an error to fail securely and thwart the attack.

@@ -12,6 +12,16 @@ def init_db():
     if os.path.exists(DB_PATH):
         os.remove(DB_PATH)
     
+    # 🛡️ Sentinel: Securely pre-create DB with strict permissions (0o600) to prevent
+    # unauthorized access and mitigate TOCTOU race conditions.
+    try:
+        fd = os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)
+        os.close(fd)
+    except FileExistsError:
+        # If the file exists after we just deleted it, it implies an attacker is racing us.
+        # Fail securely rather than passing and connecting to an attacker-controlled file.
+        raise RuntimeError("Possible TOCTOU attack: DB file exists right after deletion.")
+
     conn = get_db()
     cursor = conn.cursor()
     
