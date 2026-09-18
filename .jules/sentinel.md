@@ -1,0 +1,4 @@
+## 2026-09-18 - Insecure Local SQLite Database Permissions
+**Vulnerability:** The local SQLite database (`cytotax.db`) was created without restricting file permissions, allowing unauthorized access to potentially sensitive tax/transaction data by other local users. There was also a Time-of-Check to Time-of-Use (TOCTOU) vulnerability where the database file could be replaced with a symlink between checking for its existence and its creation.
+**Learning:** Local databases for sensitive data must be explicitly created with strict access controls (e.g., 0o600). Simply removing and then connecting via `sqlite3.connect()` creates the file with default (usually too open) umask permissions.
+**Prevention:** Pre-create the database file using `os.open()` with `os.O_CREAT | os.O_EXCL | os.O_RDWR` and mode `0o600`. Catch `FileExistsError` to detect and prevent TOCTOU symlink attacks before initializing the SQLite connection.
