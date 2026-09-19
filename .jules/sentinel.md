@@ -1,0 +1,4 @@
+## 2026-09-19 - [SQLite DB Creation TOCTOU & Permissions]
+**Vulnerability:** Initializing local SQLite databases by simply removing existing files and relying on default library connections allows an attacker to exploit the time gap (Time-of-Check to Time-of-Use) to inject a malicious file or symlink. Moreover, default permissions may be too permissive, potentially exposing sensitive data stored in the DB.
+**Learning:** Python's `os.remove` followed by a separate DB connection function does not atomically recreate the file safely, leaving a window for race condition attacks. The file must be explicitly and securely pre-created with strict permissions before connecting.
+**Prevention:** Use `os.open` with `os.O_CREAT | os.O_EXCL | os.O_RDWR` and strict permissions like `0o600`. Catch `FileExistsError` explicitly to fail securely, which signals that a file was unexpectedly created in the race window.
