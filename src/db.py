@@ -11,7 +11,14 @@ def get_db():
 def init_db():
     if os.path.exists(DB_PATH):
         os.remove(DB_PATH)
-    
+
+    try:
+        # Pre-create DB file with strict permissions (0o600) to avoid TOCTOU
+        fd = os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)
+        os.close(fd)
+    except FileExistsError:
+        raise RuntimeError(f"Database file {DB_PATH} already exists after deletion attempt, failing securely.")
+
     conn = get_db()
     cursor = conn.cursor()
     

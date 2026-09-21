@@ -1,0 +1,4 @@
+## 2026-09-21 - Fix TOCTOU vulnerability in SQLite initialization
+**Vulnerability:** The SQLite database was being initialized without strict file permissions and with a classic TOCTOU vulnerability where `os.path.exists()` was checked before deleting/creating the file, allowing an attacker to swap the file out.
+**Learning:** Always use `os.open` with `O_CREAT | O_EXCL` and strict permissions (`0o600`) when initializing local database files.
+**Prevention:** Pre-create the file securely with `os.open(..., os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)` and explicitly raise `FileExistsError` to fail securely if creation fails.
