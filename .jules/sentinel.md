@@ -1,0 +1,4 @@
+## 2026-09-22 - [HIGH] Fix local DB permissions and TOCTOU vulnerability
+**Vulnerability:** SQLite database file was created without explicitly setting secure permissions, allowing potential unauthorized access. Additionally, the initialization sequence (check if exists -> delete -> create) was vulnerable to a Time-of-Check to Time-of-Use (TOCTOU) race condition.
+**Learning:** When generating local storage files, always pre-create them with restrictive permissions (e.g. 0o600). The TOCTOU condition requires explicit handling of `FileExistsError` to fail securely if a file is placed maliciously between the removal and recreation steps.
+**Prevention:** Use `os.open` with `os.O_CREAT | os.O_EXCL | os.O_RDWR` and explicitly set permissions (`0o600`). Ensure `FileExistsError` is caught and a runtime exception is thrown to abort the process securely.
