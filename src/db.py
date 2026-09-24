@@ -12,6 +12,14 @@ def init_db():
     if os.path.exists(DB_PATH):
         os.remove(DB_PATH)
     
+    try:
+        # Securely create the database file with 0o600 permissions
+        # to prevent unauthorized access and TOCTOU vulnerabilities
+        fd = os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)
+        os.close(fd)
+    except FileExistsError:
+        raise RuntimeError("Database file already exists after deletion, possible TOCTOU race condition.")
+
     conn = get_db()
     cursor = conn.cursor()
     
