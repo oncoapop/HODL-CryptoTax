@@ -1,0 +1,4 @@
+## 2024-05-20 - Insecure SQLite Database File Creation
+**Vulnerability:** The SQLite database `cytotax.db` was created without explicit file permissions, and there was a Time-of-Check to Time-of-Use (TOCTOU) race condition when checking if the file existed and then initializing the database. This could allow an attacker with local access to create a malicious symlink or read the database contents.
+**Learning:** Always use `os.open` with `os.O_CREAT | os.O_EXCL` when creating sensitive files to prevent TOCTOU vulnerabilities and ensure strict permissions are set from the beginning.
+**Prevention:** Use `os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)` wrapped in a `try...except FileExistsError` block that fails securely by raising an exception, preventing unintended side effects.

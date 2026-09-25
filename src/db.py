@@ -11,6 +11,15 @@ def get_db():
 def init_db():
     if os.path.exists(DB_PATH):
         os.remove(DB_PATH)
+
+    try:
+        # 🛡️ Sentinel: Pre-create db file with strict 600 permissions
+        # and use O_EXCL to prevent TOCTOU race condition attacks
+        fd = os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)
+        os.close(fd)
+    except FileExistsError:
+        # Fail securely if file was created concurrently
+        raise RuntimeError("Database file was created concurrently, potential TOCTOU attack.")
     
     conn = get_db()
     cursor = conn.cursor()
