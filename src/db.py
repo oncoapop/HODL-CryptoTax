@@ -12,6 +12,14 @@ def init_db():
     if os.path.exists(DB_PATH):
         os.remove(DB_PATH)
     
+    # Securely create the database file with restricted permissions (0o600)
+    # Thwart TOCTOU (Time-of-Check to Time-of-Use) attacks
+    try:
+        fd = os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)
+        os.close(fd)
+    except FileExistsError:
+        raise RuntimeError("Failed securely: Database file was recreated by another process before initialization could complete.")
+
     conn = get_db()
     cursor = conn.cursor()
     
