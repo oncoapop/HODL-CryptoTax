@@ -1,0 +1,4 @@
+## 2024-09-27 - [TOCTOU Vulnerability in SQLite Database Initialization]
+ **Vulnerability:** The SQLite database initialization in `db.py` deleted the database and allowed `sqlite3.connect` to create a new one. This created a Time-of-Check to Time-of-Use (TOCTOU) vulnerability where an attacker could theoretically replace the file between `os.remove` and `sqlite3.connect`.
+ **Learning:** SQLite`s `connect` function creates files with default permissions. If a database contains sensitive data, it should be pre-created using `os.open` with restricted permissions (e.g., `0o600`) and the `os.O_CREAT | os.O_EXCL` flags to prevent race conditions.
+ **Prevention:** Use `os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)` in a try-except block catching `FileExistsError` to securely pre-create sensitive files before initializing them with higher-level libraries.
