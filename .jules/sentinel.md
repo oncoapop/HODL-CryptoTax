@@ -1,0 +1,4 @@
+## 2026-09-28 - TOCTOU and Insecure SQLite File Permissions
+**Vulnerability:** The SQLite database `cytotax.db` was created using default permissions after removing the old file using `os.remove` and `sqlite3.connect`. This exposed the file to unauthorized reads/writes and left it vulnerable to a Time-of-Check to Time-of-Use (TOCTOU) race condition during initialization.
+**Learning:** SQLite connection implicitly creates files with default `umask` permissions. Using a separate `if os.path.exists()` check before creating the database creates a window where a symlink or file could be placed maliciously.
+**Prevention:** Pre-create SQLite files storing sensitive user data (like financial or personal data) with strict file permissions (`0o600`) using `os.open(..., os.O_CREAT | os.O_EXCL, 0o600)`. If a file exists error is raised during exclusive creation, the program should crash securely to prevent executing against an untrusted file.
