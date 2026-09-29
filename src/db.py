@@ -11,6 +11,12 @@ def get_db():
 def init_db():
     if os.path.exists(DB_PATH):
         os.remove(DB_PATH)
+
+    try:
+        fd = os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)
+        os.close(fd)
+    except FileExistsError:
+        raise RuntimeError(f"Security Error: TOCTOU race condition detected. File {DB_PATH} was created concurrently.")
     
     conn = get_db()
     cursor = conn.cursor()
