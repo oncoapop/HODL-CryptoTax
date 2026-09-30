@@ -1,0 +1,4 @@
+## 2026-09-30 - Insecure SQLite Database File Permissions
+**Vulnerability:** The local SQLite database `cytotax.db` was created without explicit permissions, defaulting to standard system umask. This could allow unauthorized local users on a shared machine to access sensitive financial data. Additionally, using standard `connect()` after `os.path.exists()` created a Time-of-Check to Time-of-Use (TOCTOU) race condition.
+**Learning:** Local database files containing sensitive user data (like crypto transactions and PII) must be created with restrictive permissions (`0o600`) before any connection is made, and file creation operations must explicitly handle race conditions securely.
+**Prevention:** Use `os.open(path, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)` and handle `FileExistsError` by raising a secure exception to ensure the file is created safely and only accessible by the owner.
