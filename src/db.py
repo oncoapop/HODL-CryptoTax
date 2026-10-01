@@ -12,6 +12,13 @@ def init_db():
     if os.path.exists(DB_PATH):
         os.remove(DB_PATH)
     
+    # Pre-create the database file with strict permissions (0o600) to prevent unauthorized access
+    try:
+        fd = os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)
+        os.close(fd)
+    except FileExistsError:
+        raise RuntimeError(f"Failed to securely create database file at {DB_PATH}: file already exists.")
+
     conn = get_db()
     cursor = conn.cursor()
     
