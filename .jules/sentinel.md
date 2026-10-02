@@ -1,0 +1,4 @@
+## 2024-10-02 - Secure Database Initialization
+**Vulnerability:** SQLite database file `cytotax.db` was created with default permissions, exposing sensitive user financial data locally. Additionally, relying on `os.remove()` and subsequent creation by `sqlite3.connect()` creates a Time-of-Check to Time-of-Use (TOCTOU) vulnerability where an attacker could theoretically swap the file out.
+**Learning:** Default permissions on files created by `sqlite3` are not secure enough for highly sensitive local databases (like crypto tax software).
+**Prevention:** Explicitly pre-create database files with strict permissions (0o600) using `os.open(..., os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)`. When wrapping this in a `try...except FileExistsError` after a deletion attempt, explicitly raise the error in the `except` block to prevent silently failing and allowing an attacker to exploit the race condition.
