@@ -1,0 +1,4 @@
+## 2026-10-04 - TOCTOU Database Initialization
+**Vulnerability:** SQLite database file created implicitly without strict file permissions, and vulnerable to a Time-of-Check to Time-of-Use (TOCTOU) race condition during recreate.
+**Learning:** Always use `os.open` with `os.O_CREAT | os.O_EXCL` and explicitly specify secure mode like `0o600` when creating sensitive files after checking for or deleting their prior existence. If an `FileExistsError` is caught in the `O_EXCL` check, it implies a malicious actor dropped a link/file between the delete and create. Ensure this error is explicitly raised rather than silently ignored to prevent TOCTOU bypasses.
+**Prevention:** Use secure file creation primitives with explicit restrictive permissions instead of relying on default implicit file creation by libraries like sqlite.
