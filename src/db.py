@@ -12,6 +12,14 @@ def init_db():
     if os.path.exists(DB_PATH):
         os.remove(DB_PATH)
     
+    # Securely create the database file with strict permissions (0o600)
+    # and prevent Time-of-Check to Time-of-Use (TOCTOU) attacks.
+    try:
+        fd = os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)
+        os.close(fd)
+    except FileExistsError:
+        raise RuntimeError("Failed to securely create database: File exists (possible TOCTOU attack).")
+
     conn = get_db()
     cursor = conn.cursor()
     
