@@ -12,6 +12,14 @@ def init_db():
     if os.path.exists(DB_PATH):
         os.remove(DB_PATH)
     
+    try:
+        # Pre-create the file with strict permissions (0o600) to secure sensitive data
+        fd = os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)
+        os.close(fd)
+    except FileExistsError:
+        # Fail securely to prevent Time-of-Check to Time-of-Use (TOCTOU) attacks
+        raise RuntimeError("Database file was created concurrently")
+
     conn = get_db()
     cursor = conn.cursor()
     
