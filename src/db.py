@@ -12,6 +12,12 @@ def init_db():
     if os.path.exists(DB_PATH):
         os.remove(DB_PATH)
     
+    try:
+        fd = os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)
+        os.close(fd)
+    except FileExistsError:
+        raise RuntimeError("Database file was created concurrently, aborting to prevent TOCTOU vulnerability.")
+
     conn = get_db()
     cursor = conn.cursor()
     
