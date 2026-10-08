@@ -1,0 +1,4 @@
+## 2023-10-27 - TOCTOU and Insecure SQLite DB Initialization
+**Vulnerability:** The SQLite database file was being created via sqlite3.connect(), which creates the file with default (potentially overly permissive) umask permissions. Furthermore, checking for existence (`os.path.exists`) and then removing (`os.remove`) creates a Time-of-Check to Time-of-Use (TOCTOU) race condition.
+**Learning:** SQLite's default connection initialization lacks built-in mechanisms to restrict file permissions to the current user (0o600). This is a critical gap for local applications storing sensitive financial data.
+**Prevention:** Pre-create the database file explicitly using `os.open(..., os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)` to ensure strict permissions. To mitigate the TOCTOU race condition after deletion, wrap the `os.open` call in a `try...except FileExistsError` block and explicitly raise an error to fail securely if another process creates the file in the interim.
