@@ -12,6 +12,12 @@ def init_db():
     if os.path.exists(DB_PATH):
         os.remove(DB_PATH)
     
+    # Prevent TOCTOU race conditions and enforce strict file permissions (0o600)
+    try:
+        os.close(os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600))
+    except FileExistsError:
+        raise
+
     conn = get_db()
     cursor = conn.cursor()
     

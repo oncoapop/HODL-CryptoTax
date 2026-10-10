@@ -1,0 +1,4 @@
+## 2024-10-10 - Secure SQLite Database Initialization
+**Vulnerability:** The local SQLite database file `cytotax.db` is created with default permissions, which may allow unauthorized read/write access. Additionally, the `init_db` function is vulnerable to a Time-of-Check to Time-of-Use (TOCTOU) race condition if the file is recreated by another process immediately after deletion.
+**Learning:** SQLite databases created implicitly by `sqlite3.connect()` inherit default umask permissions, making them potentially insecure. Explicitly pre-creating the file using `os.open` with `os.O_CREAT | os.O_EXCL` and `0o600` permissions prevents this, and correctly raising exceptions in `FileExistsError` prevents race conditions.
+**Prevention:** Always pre-create sensitive files with strict permissions (0o600) using atomic operations (`O_CREAT | O_EXCL`) rather than relying on application-level checks and defaults.
