@@ -1,0 +1,4 @@
+## 2024-10-12 - Secure SQLite Database Initialization
+**Vulnerability:** The SQLite database `cytotax.db` was created without explicit permissions, potentially allowing unauthorized access to sensitive tax and financial data. Furthermore, database recreation was vulnerable to Time-of-Check to Time-of-Use (TOCTOU) race conditions during file deletion and creation.
+**Learning:** Python's `sqlite3.connect` creates files with default umask permissions, which might be too permissive. Additionally, checking for file existence before deletion or creation leaves a small window for an attacker to manipulate the file.
+**Prevention:** Use `try...except FileNotFoundError` for deletion without prior checking. Pre-create the database file securely with `os.open(path, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)` and explicitly raise an error on `FileExistsError` to thwart TOCTOU attacks.
