@@ -1,0 +1,4 @@
+## 2026-10-13 - Secure Database Initialization & TOCTOU Prevention
+**Vulnerability:** The SQLite database initialization routine (`src/db.py`) used a Time-of-Check to Time-of-Use (TOCTOU) pattern (`os.path.exists()` followed by `os.remove()`) and implicitly created the database file with default permissions, which could expose sensitive tax and financial data if the system has multiple users or insufficient isolation.
+**Learning:** Always use atomic operations for file deletion (`try/except FileNotFoundError`) and file creation (`os.O_CREAT | os.O_EXCL`), and explicitly set strict permissions (e.g., `0o600`) for local data stores containing PII or financial data.
+**Prevention:** Use `os.open` with strict flags and permissions to pre-create the file before initializing it as a SQLite database.
