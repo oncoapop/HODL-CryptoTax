@@ -9,9 +9,17 @@ def get_db():
     return conn
 
 def init_db():
-    if os.path.exists(DB_PATH):
+    try:
         os.remove(DB_PATH)
-    
+    except FileNotFoundError:
+        pass
+
+    try:
+        fd = os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)
+        os.close(fd)
+    except FileExistsError:
+        raise RuntimeError(f"Database file {DB_PATH} already exists after deletion attempt (TOCTOU).")
+
     conn = get_db()
     cursor = conn.cursor()
     
