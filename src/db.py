@@ -9,9 +9,16 @@ def get_db():
     return conn
 
 def init_db():
-    if os.path.exists(DB_PATH):
+    try:
         os.remove(DB_PATH)
+    except FileNotFoundError:
+        pass
     
+    try:
+        os.close(os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600))
+    except FileExistsError:
+        raise RuntimeError(f"Race condition detected: File {DB_PATH} was created after removal.")
+
     conn = get_db()
     cursor = conn.cursor()
     
