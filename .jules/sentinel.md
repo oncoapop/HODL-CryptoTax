@@ -1,0 +1,4 @@
+## 2024-10-27 - Secure SQLite Initialization Pattern
+**Vulnerability:** TOCTOU (Time-of-Check to Time-of-Use) race condition during DB reset, and insecure default file permissions allowing unauthorized local read/write access to the tax database.
+**Learning:** SQLite's default file creation lacks strict OS-level permissions. In a desktop/tax app context, the db file should be explicitly created with 0o600 permissions prior to SQLite connection to prevent local unauthorized access. A `try/except` block must be used for deletion and explicit file descriptor creation to fail securely and thwart TOCTOU attacks.
+**Prevention:** Always use `try: os.remove(path) except FileNotFoundError: pass` for deletion, immediately followed by `os.close(os.open(path, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600))` to safely initialize local databases.
