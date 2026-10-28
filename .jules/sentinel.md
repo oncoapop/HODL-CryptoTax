@@ -1,0 +1,4 @@
+## 2026-10-28 - Secure SQLite DB Creation (TOCTOU & Permissions)
+**Vulnerability:** The SQLite database file was being deleted using an insecure `if os.path.exists` check, leading to a Time-of-Check to Time-of-Use (TOCTOU) race condition. Additionally, when re-created, the file defaulted to system permissions, potentially allowing unauthorized local access to sensitive financial data.
+**Learning:** Checking for file existence before deletion is a classic TOCTOU anti-pattern. Furthermore, relying on default permissions for sensitive SQLite files on shared systems is insecure.
+**Prevention:** Delete files directly within a `try: os.remove(path) except FileNotFoundError: pass` block. To prevent TOCTOU during creation and enforce strict access, pre-create the database file using `os.open(path, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)` with explicit 0o600 permissions, failing securely if it exists unexpectedly.
