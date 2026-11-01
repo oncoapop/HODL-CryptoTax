@@ -1,0 +1,4 @@
+## 2024-11-01 - TOCTOU and Insecure Default File Permissions in SQLite initialization
+**Vulnerability:** The SQLite database initialization in `src/db.py` suffered from a Time-of-Check to Time-of-Use (TOCTOU) race condition during deletion, and created the local database file `cytotax.db` with insecure default permissions (0o644), exposing sensitive local financial data.
+**Learning:** Default `sqlite3.connect()` creates files based on system umask, which is often too permissive for sensitive financial tools. A TOCTOU gap also existed between checking if the file existed and removing it.
+**Prevention:** Always directly perform destructive file operations using `try...except FileNotFoundError` instead of checking existence first. For sensitive local DB files, pre-create the file securely using `os.open(..., os.O_CREAT | os.O_EXCL, 0o600)` and fail securely if a race condition occurs.
