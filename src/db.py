@@ -9,9 +9,20 @@ def get_db():
     return conn
 
 def init_db():
-    if os.path.exists(DB_PATH):
+    try:
         os.remove(DB_PATH)
-    
+    except FileNotFoundError:
+        pass
+
+    try:
+        # 🛡️ Sentinel: Pre-create database file with strict 0o600 permissions
+        # to prevent unauthorized access, and use O_EXCL to thwart TOCTOU attacks.
+        fd = os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)
+        os.close(fd)
+    except FileExistsError:
+        # 🛡️ Sentinel: Fail securely if the file was created between remove and open
+        raise RuntimeError("Failed to securely initialize database: TOCTOU race condition detected.")
+
     conn = get_db()
     cursor = conn.cursor()
     
