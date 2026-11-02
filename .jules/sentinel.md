@@ -1,0 +1,4 @@
+## 2024-11-02 - Fix TOCTOU in SQLite db init and Weak DB Permissions
+**Vulnerability:** The SQLite database initialization code in `src/db.py` used an insecure `os.path.exists` check prior to deletion which allowed Time-of-Check to Time-of-Use (TOCTOU) race conditions. Also, the newly created database was lacking strict restrictive file permissions (which was especially relevant as financial data is stored).
+**Learning:** In Python, avoid `if os.path.exists(path): os.remove(path)`. Instead, just attempt deletion and catch the `FileNotFoundError`. When creating local database files storing sensitive information, pre-create the file securely with `0o600` permissions.
+**Prevention:** Use `try: os.remove(path) except FileNotFoundError: pass`. Pre-create secure files using `os.open(path, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)` wrapping it with `try-except` that raises `FileExistsError` to prevent TOCTOU on creation.
