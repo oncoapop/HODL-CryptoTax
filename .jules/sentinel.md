@@ -1,0 +1,4 @@
+## 2024-05-23 - [TOCTOU and Insecure Permissions in SQLite Database Creation]
+**Vulnerability:** The SQLite database initialization in `src/db.py` is vulnerable to a Time-of-Check to Time-of-Use (TOCTOU) race condition when deleting the database file, and it does not set restrictive permissions (0o600) when creating the local database file, which can allow unauthorized access to sensitive financial data.
+**Learning:** Using `os.path.exists()` before `os.remove()` introduces a race condition. Additionally, SQLite files created implicitly by connecting to them do not automatically have secure permissions.
+**Prevention:** Execute the deletion directly within a `try...except FileNotFoundError` block. Pre-create the database file using `os.open` with `os.O_CREAT | os.O_EXCL | os.O_RDWR` flags and restrictive permissions (`0o600`) before connecting to it with `sqlite3`. Ensure to handle the `FileExistsError` appropriately to thwart race condition attacks.
