@@ -1,0 +1,4 @@
+## 2026-11-05 - Insecure SQLite Database Initialization and TOCTOU Vulnerability
+**Vulnerability:** The application was vulnerable to a Time-of-Check to Time-of-Use (TOCTOU) race condition when deleting the database file, and failed to set strict file permissions (`0o600`) when creating the local SQLite database. This could allow unauthorized access to sensitive tax data on a shared system.
+**Learning:** Checking for file existence before deletion using `os.path.exists()` is inherently unsafe and can be exploited. Similarly, implicitly allowing SQLite to create database files can result in overly permissive default permissions.
+**Prevention:** Always use a `try: ... except FileNotFoundError: pass` block for deletion to avoid TOCTOU. Additionally, pre-create sensitive database files explicitly with `os.open` using `O_CREAT | O_EXCL` flags and strict permissions (e.g., `0o600`) before initializing the database connection.

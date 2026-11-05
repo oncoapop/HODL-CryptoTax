@@ -9,9 +9,18 @@ def get_db():
     return conn
 
 def init_db():
-    if os.path.exists(DB_PATH):
+    try:
         os.remove(DB_PATH)
+    except FileNotFoundError:
+        pass
     
+    try:
+        # Pre-create DB file with strict 0o600 permissions to prevent unauthorized access
+        fd = os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)
+        os.close(fd)
+    except FileExistsError:
+        raise RuntimeError("Database file created concurrently, potential TOCTOU vulnerability.")
+
     conn = get_db()
     cursor = conn.cursor()
     
