@@ -1,0 +1,4 @@
+## 2024-11-08 - Fixed TOCTOU Race Condition in DB Init
+**Vulnerability:** Time-of-Check to Time-of-Use (TOCTOU) race condition during SQLite database file initialization. It used `if os.path.exists(...): os.remove(...)` which left a window for an attacker to swap the file out. Furthermore, when the database was recreated by sqlite3, it did not have restricted permissions.
+**Learning:** `os.path.exists()` followed by file manipulation is inherently vulnerable to race conditions in concurrent or multi-tenant environments.
+**Prevention:** Used a `try: os.remove(...) except FileNotFoundError: pass` block (EAFP pattern) to securely remove the file without checking first. Used `os.open` with `O_CREAT | O_EXCL` flags and strict `0o600` mode permissions to safely pre-create the DB file before letting sqlite3 connect to it.
