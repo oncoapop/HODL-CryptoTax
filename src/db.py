@@ -9,8 +9,18 @@ def get_db():
     return conn
 
 def init_db():
-    if os.path.exists(DB_PATH):
+    try:
         os.remove(DB_PATH)
+    except FileNotFoundError:
+        pass
+
+    try:
+        # 🛡️ Sentinel: Pre-create database file with strict 0o600 permissions to prevent unauthorized access
+        # and fail securely if the file already exists (preventing TOCTOU attacks)
+        fd = os.open(DB_PATH, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)
+        os.close(fd)
+    except FileExistsError:
+        raise RuntimeError(f"Failed to create secure database file: file already exists.")
     
     conn = get_db()
     cursor = conn.cursor()
